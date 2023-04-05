@@ -52,27 +52,27 @@ matrix create_matrix_from_file(char *filename) {
     printf("No se pudo abrir el archivo %s\n", filename);
     exit(1);
   }
-  matrix A;
-  A.row_dim = 0;
-  A.col_dim = 0;
-  A.data = NULL;
-  char line[1000];
-  while (fgets(line, sizeof(line), fp)) {
-    A.row_dim++;
-    A.data = realloc(A.data, A.row_dim * sizeof(float *));
-    A.col_dim = 0;
-    char *tok = strtok(line, " ");
-    A.data[A.row_dim - 1] = malloc(sizeof(float));
+  matrix M;
+  M.row_dim = 0;
+  M.col_dim = 0;
+  M.data = NULL;
+  char MAX_LINE_SIZE[1000];
+  while (fgets(MAX_LINE_SIZE, sizeof(MAX_LINE_SIZE), fp)) {
+    M.row_dim++;
+    M.data = realloc(M.data, M.row_dim * sizeof(float *));
+    M.col_dim = 0;
+    char *tok = strtok(MAX_LINE_SIZE, " ");
+    M.data[M.row_dim - 1] = malloc(sizeof(float));
     while (tok != NULL) {
-      A.col_dim++;
-      A.data[A.row_dim - 1] =
-          realloc(A.data[A.row_dim - 1], A.col_dim * sizeof(float));
-      sscanf(tok, "%f", &(A.data[A.row_dim - 1][A.col_dim - 1]));
+      M.col_dim++;
+      M.data[M.row_dim - 1] =
+          realloc(M.data[M.row_dim - 1], M.col_dim * sizeof(float));
+      sscanf(tok, "%f", &(M.data[M.row_dim - 1][M.col_dim - 1]));
       tok = strtok(NULL, " ");
     }
   }
   fclose(fp);
-  return A;
+  return M;
 }
 
 // 3
@@ -84,10 +84,10 @@ void print_vector(vector v) {
 }
 
 // 4
-void print_matrix(matrix A) {
-  for (int i = 0; i < A.row_dim; i++) {
-    for (int j = 0; j < A.col_dim; j++) {
-      printf("%f ", A.data[i][j]);
+void print_matrix(matrix M) {
+  for (int i = 0; i < M.row_dim; i++) {
+    for (int j = 0; j < M.col_dim; j++) {
+      printf("%f ", M.data[i][j]);
     }
     printf("\n");
   }
@@ -97,74 +97,74 @@ void print_matrix(matrix A) {
 void destroy_vector(vector v) { free(v.data); }
 
 // 6
-void destroy_matrix(matrix A) {
-  for (int i = 0; i < A.row_dim; i++) {
-    free(A.data[i]);
+void destroy_matrix(matrix M) {
+  for (int i = 0; i < M.row_dim; i++) {
+    free(M.data[i]);
   }
-  free(A.data);
+  free(M.data);
 }
 
 // 7
-matrix transpose_matrix(matrix A) {
-  matrix B = {A.col_dim, A.row_dim, malloc(A.col_dim * sizeof(float *))};
-  for (int i = 0; i < B.row_dim; i++) {
-    B.data[i] = malloc(B.col_dim * sizeof(float));
-    for (int j = 0; j < B.col_dim; j++) {
-      B.data[i][j] = A.data[j][i];
+matrix transpose_matrix(matrix M) {
+  matrix N = {M.col_dim, M.row_dim, malloc(M.col_dim * sizeof(float *))};
+  for (int i = 0; i < N.row_dim; i++) {
+    N.data[i] = malloc(N.col_dim * sizeof(float));
+    for (int j = 0; j < N.col_dim; j++) {
+      N.data[i][j] = M.data[j][i];
     }
   }
-  return B;
+  return N;
 }
 
 // 8
-matrix sum_matrix_matrix(matrix A, matrix B) {
-  if (A.row_dim != B.row_dim || A.col_dim != B.col_dim) {
+matrix sum_matrix_matrix(matrix M, matrix N) {
+  if (M.row_dim != N.row_dim || M.col_dim != N.col_dim) {
     printf("Error: matrices incompatibles\n");
-    return A;
+    return M;
   }
-  matrix C = {A.row_dim, A.col_dim, malloc(A.row_dim * sizeof(float *))};
-  for (int i = 0; i < C.row_dim; i++) {
-    C.data[i] = malloc(C.col_dim * sizeof(float));
-    for (int j = 0; j < C.col_dim; j++) {
-      C.data[i][j] = A.data[i][j] + B.data[i][j];
+  matrix O = {M.row_dim, M.col_dim, malloc(M.row_dim * sizeof(float *))};
+  for (int i = 0; i < O.row_dim; i++) {
+    O.data[i] = malloc(O.col_dim * sizeof(float));
+    for (int j = 0; j < O.col_dim; j++) {
+      O.data[i][j] = M.data[i][j] + N.data[i][j];
     }
   }
-  return C;
+  return O;
 }
 
 // 9
-matrix mult_matrix_matrix(matrix A, matrix B) {
-  if (A.col_dim != B.row_dim) {
+matrix mult_matrix_matrix(matrix M, matrix N) {
+  if (M.col_dim != N.row_dim) {
     printf("Error: matrices incompatibles\n");
-    return A;
+    return M;
   }
-  matrix C = {A.row_dim, B.col_dim, malloc(A.row_dim * sizeof(float *))};
-  for (int i = 0; i < C.row_dim; i++) {
-    C.data[i] = malloc(C.col_dim * sizeof(float));
-    for (int j = 0; j < C.col_dim; j++) {
+  matrix O = {M.row_dim, N.col_dim, malloc(M.row_dim * sizeof(float *))};
+  for (int i = 0; i < O.row_dim; i++) {
+    O.data[i] = malloc(O.col_dim * sizeof(float));
+    for (int j = 0; j < O.col_dim; j++) {
       float sum = 0;
-      for (int k = 0; k < A.col_dim; k++) {
-        sum += A.data[i][k] * B.data[k][j];
+      for (int k = 0; k < M.col_dim; k++) {
+        sum += M.data[i][k] * N.data[k][j];
       }
-      C.data[i][j] = sum;
+      O.data[i][j] = sum;
     }
   }
-  return C;
+  return O;
 }
 
 // 10
-vector *mult_matrix_vector(matrix A, vector v) {
-  if (A.col_dim != v.dim) {
+vector *mult_matrix_vector(matrix M, vector v) {
+  if (M.col_dim != v.dim) {
     printf("Error: matriz y vector incompatibles\n");
     return &v;
   }
   vector *w = malloc(sizeof(vector));
-  w->dim = A.row_dim;
+  w->dim = M.row_dim;
   w->data = malloc(w->dim * sizeof(float));
   for (int i = 0; i < w->dim; i++) {
     float sum = 0;
-    for (int j = 0; j < A.col_dim; j++) {
-      sum += A.data[i][j] * v.data[j];
+    for (int j = 0; j < M.col_dim; j++) {
+      sum += M.data[i][j] * v.data[j];
     }
     w->data[i] = sum;
   }
@@ -191,11 +191,11 @@ int probarFuncionesVectores() {
 int probarFuncionesMatrix() {
   
   //Crea, imprime y destruye MATRIZ
-  printf("\n    4. 5. 6. Crea, imprime y destruye la matriz A:\n");
-  matrix A = create_matrix_from_file("m1.txt");
-  print_matrix(A);
-  printf("  Dimensiones: %d filas, %d columnas\n", A.row_dim, A.col_dim);
-  destroy_matrix(A);
+  printf("\n    4. 5. 6. Crea, imprime y destruye la matriz M:\n");
+  matrix M = create_matrix_from_file("m1.txt");
+  print_matrix(M);
+  printf("  Dimensiones: %d filas, %d columnas\n", M.row_dim, M.col_dim);
+  destroy_matrix(M);
   printf("\n");
 
   return 0;
@@ -205,39 +205,39 @@ int probarFuncionesOperaciones() {
 
   // transpuesta
   printf("\n    7. Transpuesta:\n");
-  printf("Matriz original A:\n");
-  matrix A = create_matrix_from_file("m1.txt");
-  print_matrix(A);
+  printf("Matriz original M:\n");
+  matrix M = create_matrix_from_file("m1.txt");
+  print_matrix(M);
   printf("\n");
-  printf("Matriz traspuesta At:\n");
-  matrix At = transpose_matrix(A);
-  print_matrix(At);
+  printf("Matriz traspuesta Mt:\n");
+  matrix Mt = transpose_matrix(M);
+  print_matrix(Mt);
   printf("\n");
 
   // suma
-  printf("\n    8. Suma matriz A por si misma:\n");
-  matrix B = sum_matrix_matrix(A, A);
-  print_matrix(B);
+  printf("\n    8. Suma matriz M por si misma:\n");
+  matrix N = sum_matrix_matrix(M, M);
+  print_matrix(N);
   printf("\n");
 
   // multiplicacion m por m
-  printf("\n    9. Multiplicacion matriz A por su traspuesta:\n");
-  matrix C = mult_matrix_matrix(A, At);
-  print_matrix(C);
+  printf("\n    9. Multiplicacion matriz M por su traspuesta Mt:\n");
+  matrix O = mult_matrix_matrix(M, Mt);
+  print_matrix(O);
   printf("\n");
 
   // multiplicacion m por v
-  printf("\n    10. Multiplicacion atriz A por vector 1:\n");
-  vector *w = mult_matrix_vector(A, create_vector_from_file("v1.txt"));
+  printf("\n    10. Multiplicacion atriz M por vector 1:\n");
+  vector *w = mult_matrix_vector(M, create_vector_from_file("v1.txt"));
   print_vector(*w);
 
   
   // end
   printf("\n");
-  destroy_matrix(A);
-  destroy_matrix(At);
-  destroy_matrix(B);
-  destroy_matrix(C);
+  destroy_matrix(M);
+  destroy_matrix(Mt);
+  destroy_matrix(N);
+  destroy_matrix(O);
   destroy_vector(*w);
   
   return 0;
