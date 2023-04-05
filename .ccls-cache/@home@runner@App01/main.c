@@ -24,6 +24,7 @@ typedef struct {
 //
 //      funciones de tarea
 
+//1
 vector create_vector_from_file(char *filename) {
   FILE *fp = fopen(filename, "r");
   if (fp == NULL) {
@@ -43,6 +44,7 @@ vector create_vector_from_file(char *filename) {
   return v;
 }
 
+//2
 matrix create_matrix_from_file(char *filename) {
     FILE *fp = fopen(filename, "r");
     if (fp == NULL) {
@@ -71,6 +73,7 @@ matrix create_matrix_from_file(char *filename) {
     return A;
 }
 
+//3
 void print_vector(vector v) {
   for (int i = 0; i < v.dim; i++) {
     printf("%f ", v.data[i]);
@@ -78,6 +81,7 @@ void print_vector(vector v) {
   printf("\n");
 }
 
+//4
 void print_matrix(matrix A) {
     for (int i = 0; i < A.row_dim; i++) {
         for (int j = 0; j < A.col_dim; j++) {
@@ -87,8 +91,10 @@ void print_matrix(matrix A) {
     }
 }
 
+//5
 void destroy_vector(vector v) { free(v.data); }
 
+//6
 void destroy_matrix(matrix A) {
   for (int i = 0; i < A.row_dim; i++) {
     free(A.data[i]);
@@ -96,6 +102,22 @@ void destroy_matrix(matrix A) {
   free(A.data);
 }
 
+//7
+
+matrix transpose_matrix(matrix A) {
+    matrix B = {A.col_dim, A.row_dim, malloc(A.col_dim * sizeof(float*))};
+    for (int i = 0; i < B.row_dim; i++) {
+        B.data[i] = malloc(B.col_dim * sizeof(float));
+        for (int j = 0; j < B.col_dim; j++) {
+            B.data[i][j] = A.data[j][i];
+        }
+    }
+    return B;
+}
+
+//8
+//9
+//10
 //
 //      funciones para probar las funciones de la tarea
 
@@ -119,12 +141,23 @@ int probarFuncionesMatrix() {
   return 0;
 }
 
+int probarFuncionesOperaciones() {
+  matrix A = create_matrix_from_file("ej2.txt");
+  print_matrix(A);
+  matrix At = transpose_matrix(A);
+  destroy_matrix(A);
+  print_matrix(At);
+  destroy_matrix(At);
+  return 0;
+}
+
 //
 //      funcion orquesatador
 
 int Orq() {
-  probarFuncionesVectores();
-  probarFuncionesMatrix();
+  //probarFuncionesVectores();
+  //probarFuncionesMatrix();
+  probarFuncionesOperaciones();
 
   return 0;
 }
