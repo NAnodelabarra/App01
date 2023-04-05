@@ -178,7 +178,7 @@ vector *mult_matrix_vector(matrix M, vector v) {
 int probarFuncionesVectores() {
 
   //Crea, imprime y destruye VECTOR
-  printf("\n    1. 2. 3. Crea, imprime y destruye el vector v:\n");
+  printf("\n    1. 3. 5. Crea, imprime y destruye el vector v:\n");
   vector v = create_vector_from_file("v1.txt");
   print_vector(v);
   printf("  Dimensiones: %d items\n", v.dim);
@@ -191,7 +191,7 @@ int probarFuncionesVectores() {
 int probarFuncionesMatrix() {
   
   //Crea, imprime y destruye MATRIZ
-  printf("\n    4. 5. 6. Crea, imprime y destruye la matriz M:\n");
+  printf("\n    2. 4. 6. Crea, imprime y destruye la matriz M:\n");
   matrix M = create_matrix_from_file("m1.txt");
   print_matrix(M);
   printf("  Dimensiones: %d filas, %d columnas\n", M.row_dim, M.col_dim);
